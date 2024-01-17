@@ -2,16 +2,8 @@ import re
 import sys
 import os
 import re
-
-arguments = len(sys.argv) - 1 # subtract one to skip the script name
-
-if arguments < 0:
-    print('Usage: python3',sys.argv[0],'<fasta>\n')
-    sys.exit()
-
-input = sys.argv[1]
-
-def fasta_length(fasta):
+# dodac opis
+def fasta_length(fasta,length_output,bed_output):
     name = ''
     seq = ''
     length = 0
@@ -25,8 +17,8 @@ def fasta_length(fasta):
                 if seq:
                     length += len(seq)
                     name = name.split()[0]
-                    print(f"{name}\t{length}")
-                    print(f"{name}\t1\t{length}", file=sys.stderr)
+                    print(f"{name}\t{length}", file=open(length_output,'a'))
+                    print(f"{name}\t1\t{length}", file=open(bed_output,'a'))
                     seq = ''
 
                 name = match.group(1)
@@ -38,8 +30,8 @@ def fasta_length(fasta):
                 if seq:
                     length += len(seq)
                     name = name.split()[0]
-                    print(f"{name}\t{length}")
-                    print(f"{name}\t1\t{length}", file=sys.stderr)
+                    print(f"{name}\t{length}", file=open(length_output,'a'))
+                    print(f"{name}\t1\t{length}", file=open(bed_output,'a'))
                     seq = ''
 
             elif line[0].isalpha():
@@ -47,17 +39,14 @@ def fasta_length(fasta):
 
             line = infile.readline()
 
-def process_directory(directory_path):
+def process_directory(directory_path,length_output,bed_output):
     with os.scandir(directory_path) as entries:
         for entry in entries:
             if entry.is_file() and (entry.name.endswith(('.fa','.fna','.fasta','.gb'))):
-                fasta_length(entry.path)
+                fasta_length(entry.path,length_output,bed_output)
 
-def main(input_path):
+def main(input_path,length_output,bed_output):
     if os.path.isdir(input_path):
-        process_directory(input_path)
+        process_directory(input_path,length_output,bed_output)
     else:
-        fasta_length(input_path)
-
-
-main(input)
+        fasta_length(input_path,length_output,bed_output)

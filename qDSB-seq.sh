@@ -83,13 +83,14 @@ echo "background: $background"
 echo "prefix: $prefix"
 echo "output_directory: $output_dir"
 
-results_output_dir=$output_dir'/results'
-mkdir $results_output_dir
+output_dir=$output_dir'/results'
+mkdir $output_dir
+
+# 1) create genome sequence length file and genome sequence length bed file, if there is no genome sequence :c
 
 chr_length=${#genome_sequence}
-
 if [ -n "$genome_sequence" ]; then
-  genome_sequence_output_dir=$output_dir'/results/genome_sequence'
+  genome_sequence_output_dir=$output_dir'/genome_sequence'
   mkdir $genome_sequence_output_dir
 
   genome_sequence_length_file=$genome_sequence_output_dir'/genome_sequence.length'
@@ -97,6 +98,13 @@ if [ -n "$genome_sequence" ]; then
 
 	python3 scripts/fasta_length.py "$genome_sequence" >$genome_sequence_length_file 2>$genome_sequence_length_bed_file
 fi
+
+# 2) map DSB sequencing data to genome, and call depth
+
+python3 process_DSB-seq_data.py $genome_name $chr_length $bowtie_index $enzyme_name $enzyme_type $enzyme_cutting_sites $DSB_reads $prefix $output_dir
+
+
+
 
 
 

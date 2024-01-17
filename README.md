@@ -1,3 +1,6 @@
-what's needed:
+Python version: 3.8
 
-- pip install os sys re
+Packages:
+* os
+* sys
+* bowtie2 from bioconda
